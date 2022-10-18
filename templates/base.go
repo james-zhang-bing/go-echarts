@@ -13,6 +13,9 @@ var BaseTpl = `
 	let action_{{ .ChartID | safeJS }} = {{ .JSONNotEscapedAction | safeJS }};
     goecharts_{{ .ChartID | safeJS }}.setOption(option_{{ .ChartID | safeJS }});
  	goecharts_{{ .ChartID | safeJS }}.dispatchAction(action_{{ .ChartID | safeJS }});
+    {{if .EventCfg}}
+    {{end}}
+
 
     {{if .UpdaterConfig}}
     function UpdateOption() {

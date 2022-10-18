@@ -13,6 +13,7 @@ import (
 
 	"github.com/go-echarts/go-echarts/v2/actions"
 	"github.com/go-echarts/go-echarts/v2/datasets"
+	"github.com/go-echarts/go-echarts/v2/event"
 	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/go-echarts/go-echarts/v2/render"
 	"github.com/gorilla/websocket"
@@ -82,6 +83,8 @@ type BaseConfiguration struct {
 
 	// UpdaterConfig use to update the chart option . if it's not nil, use RegisterMux to set handle.
 	*UpdaterConfig `json:"-"`
+	// set event
+	EventCfg *event.EventConfig `json:"-"`
 }
 
 // BaseActions represents a dispatchAction set needed by all chart types.
