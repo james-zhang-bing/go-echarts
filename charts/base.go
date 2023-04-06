@@ -350,11 +350,18 @@ func (bc *BaseConfiguration) GetUpdaterHandlerFunc() http.HandlerFunc {
 	}
 	return bc.Handle
 }
+
 func (bc *BaseConfiguration) GetChartID() string {
 	if bc.Initialization.ChartID == "" {
 		bc.Initialization.Validate()
 	}
 	return bc.ChartID
+}
+
+func (bc *BaseConfiguration) CallChartMethod(methods ...string) {
+	for _, v := range methods {
+		bc.AddJSFuncs(fmt.Sprintf("goecharts_%s.%s", bc.GetChartID(), v))
+	}
 }
 
 func (bc *BaseActions) setBaseGlobalActions(opts ...GlobalActions) {

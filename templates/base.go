@@ -13,10 +13,9 @@ var BaseTpl = `
 	let action_{{ .ChartID | safeJS }} = {{ .JSONNotEscapedAction | safeJS }};
     goecharts_{{ .ChartID | safeJS }}.setOption(option_{{ .ChartID | safeJS }});
  	goecharts_{{ .ChartID | safeJS }}.dispatchAction(action_{{ .ChartID | safeJS }});
-    {{if .EventCfg}}
-    {{end}}
-
-
+     {{- range .JSFunctions.Fns }}
+     {{ . | safeJS }}
+     {{- end }}
     {{if .UpdaterConfig}}
     function UpdateOption() {
         var ip_addr = document.location.host;
@@ -41,9 +40,6 @@ var BaseTpl = `
 }
 UpdateOption();
     {{end}}
-    {{- range .JSFunctions.Fns }}
-    {{ . | safeJS }}
-    {{- end }}
 </script>
 {{ end }}
 `

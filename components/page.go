@@ -38,7 +38,7 @@ type Page struct {
 func NewPage() *Page {
 	page := &Page{}
 	page.Assets.InitAssets()
-	page.Renderer = render.NewPageRender(page, page.Validate,page.ValidateMux)
+	page.Renderer = render.NewPageRender(page, page.Validate)
 	page.Layout = PageCenterLayout
 	return page
 }
