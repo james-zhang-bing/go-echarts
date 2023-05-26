@@ -60,7 +60,7 @@ type RectConfiguration struct {
 }
 
 func (rect *RectConfiguration) setRectGlobalOptions(options ...GlobalOpts) {
-	rect.BaseConfiguration.setBaseGlobalOptions(options...)
+	rect.BaseConfiguration.SetBaseGlobalOptions(options...)
 }
 
 func (rect *RectConfiguration) setRectGlobalActions(options ...GlobalActions) {

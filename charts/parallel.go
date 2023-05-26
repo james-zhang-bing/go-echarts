@@ -34,7 +34,7 @@ func (c *Parallel) AddSeries(name string, data []opts.ParallelData, options ...S
 
 // SetGlobalOptions sets options for the Parallel instance.
 func (c *Parallel) SetGlobalOptions(options ...GlobalOpts) *Parallel {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

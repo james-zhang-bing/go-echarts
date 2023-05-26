@@ -33,7 +33,7 @@ func (c *Sunburst) AddSeries(name string, data []opts.SunBurstData, options ...S
 
 // SetGlobalOptions sets options for the Pie instance.
 func (c *Sunburst) SetGlobalOptions(options ...GlobalOpts) *Sunburst {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

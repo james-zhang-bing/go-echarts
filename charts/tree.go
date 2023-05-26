@@ -33,7 +33,7 @@ func (c *Tree) AddSeries(name string, data []opts.TreeData, options ...SeriesOpt
 
 // SetGlobalOptions sets options for the Tree instance.
 func (c *Tree) SetGlobalOptions(options ...GlobalOpts) *Tree {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

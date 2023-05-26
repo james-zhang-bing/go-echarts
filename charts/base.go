@@ -39,6 +39,7 @@ type BaseConfiguration struct {
 	opts.SingleAxis        `json:"-"`
 
 	MultiSeries
+	Graphics *Graphic `json:"graphic,omitempty"`
 	XYAxis
 
 	opts.XAxis3D
@@ -196,7 +197,18 @@ func (bc *BaseConfiguration) json() map[string]interface{} {
 		obj["brush"] = bc.Brush
 	}
 
+	if bc.Graphics != nil {
+		obj["graphic"] = bc.Graphics
+	}
+
 	return obj
+}
+
+// Default AddSeries method: adds the new series.
+func (bc *BaseConfiguration) AddOtherSeries(name string, data interface{}, chartTypes string, options ...SeriesOpts) {
+	series := SingleSeries{Name: name, Type: chartTypes, Data: data}
+	series.ConfigureSeriesOpts(options...)
+	bc.MultiSeries = append(bc.MultiSeries, series)
 }
 
 // GetAssets returns the Assets options.
@@ -238,7 +250,7 @@ func (bc *BaseConfiguration) insertSeriesColors(colors []string) {
 	}
 }
 
-func (bc *BaseConfiguration) setBaseGlobalOptions(opts ...GlobalOpts) {
+func (bc *BaseConfiguration) SetBaseGlobalOptions(opts ...GlobalOpts) {
 	for _, opt := range opts {
 		opt(bc)
 	}

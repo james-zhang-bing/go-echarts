@@ -50,7 +50,7 @@ func (c *WordCloud) AddSeries(name string, data []opts.WordCloudData, options ..
 
 // SetGlobalOptions sets options for the WordCloud instance.
 func (c *WordCloud) SetGlobalOptions(options ...GlobalOpts) *WordCloud {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

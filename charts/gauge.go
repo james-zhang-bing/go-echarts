@@ -33,7 +33,7 @@ func (c *Gauge) AddSeries(name string, data []opts.GaugeData, options ...SeriesO
 
 // SetGlobalOptions sets options for the Gauge instance.
 func (c *Gauge) SetGlobalOptions(options ...GlobalOpts) *Gauge {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

@@ -33,7 +33,7 @@ func (c *Sankey) AddSeries(name string, nodes []opts.SankeyNode, links []opts.Sa
 
 // SetGlobalOptions sets options for the Sankey instance.
 func (c *Sankey) SetGlobalOptions(options ...GlobalOpts) *Sankey {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 
