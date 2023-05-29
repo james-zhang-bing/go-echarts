@@ -35,7 +35,7 @@ func (c *Radar) AddSeries(name string, data []opts.RadarData, options ...SeriesO
 
 // SetGlobalOptions sets options for the Radar instance.
 func (c *Radar) SetGlobalOptions(options ...GlobalOpts) *Radar {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

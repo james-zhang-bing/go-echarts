@@ -56,7 +56,7 @@ func (c *Chart3D) addSeries(chartType, name string, data []opts.Chart3DData, opt
 
 // SetGlobalOptions sets options for the Chart3D instance.
 func (c *Chart3D) SetGlobalOptions(options ...GlobalOpts) *Chart3D {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

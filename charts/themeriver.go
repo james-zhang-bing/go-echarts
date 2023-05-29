@@ -38,7 +38,7 @@ func (c *ThemeRiver) AddSeries(name string, data []opts.ThemeRiverData, options 
 
 // SetGlobalOptions sets options for the ThemeRiver instance.
 func (c *ThemeRiver) SetGlobalOptions(options ...GlobalOpts) *ThemeRiver {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

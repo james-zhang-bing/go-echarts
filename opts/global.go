@@ -34,7 +34,7 @@ type Initialization struct {
 	ChartID string
 
 	// Assets host
-	AssetsHost string `default:"https://go-echarts.github.io/go-echarts-assets/assets/"`
+	AssetsHost string `default:"https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/"`
 
 	// Theme of chart
 	Theme string `default:"white"`
@@ -42,22 +42,30 @@ type Initialization struct {
 
 // Validate validates the initialization configurations.
 func (opt *Initialization) Validate() {
-	setDefaultValue(opt)
+	SetDefaultValue(opt)
 	if opt.ChartID == "" {
 		opt.ChartID = generateUniqueID()
 	}
 }
 
-// set default values for the struct field.
-// origin from: https://github.com/mcuadros/go-defaults
-func setDefaultValue(ptr interface{}) {
+// SetDefaultValue set default values for the struct field.
+// inspired from: https://github.com/mcuadros/go-defaults
+func SetDefaultValue(ptr interface{}) {
 	elem := reflect.ValueOf(ptr).Elem()
-	t := elem.Type()
+	walkField(elem)
+}
+
+func walkField(val reflect.Value) {
+	t := val.Type()
 
 	for i := 0; i < t.NumField(); i++ {
-		// handle `default` tag only
+		f := val.Field(i)
+		if f.Kind() == reflect.Struct {
+			walkField(f)
+		}
+
 		if defaultVal := t.Field(i).Tag.Get("default"); defaultVal != "" {
-			setField(elem.Field(i), defaultVal)
+			setField(val.Field(i), defaultVal)
 		}
 	}
 }
@@ -156,7 +164,8 @@ type Title struct {
 // https://echarts.apache.org/en/option.html#legend
 type Legend struct {
 	// Whether to show the Legend, default true.
-	Show bool `json:"show"`
+	// Once you set other options, need to manually set it to true
+	Show bool `json:"show" default:"true"`
 
 	// Type of legend. Optional values:
 	// "plain": Simple legend. (default)
@@ -281,6 +290,10 @@ type Tooltip struct {
 	//    It can also be triggered by axisPointer.handle in this case.
 	TriggerOn string `json:"triggerOn,omitempty"`
 
+	// Whether mouse is allowed to enter the floating layer of tooltip, whose default value is false.
+	// If you need to interact in the tooltip like with links or buttons, it can be set as true.
+	Enterable bool `json:"enterable,omitempty"`
+
 	// The content formatter of tooltip's floating layer which supports string template and callback function.
 	//
 	// 1. String template
@@ -338,6 +351,8 @@ type Tooltip struct {
 	// }
 	Formatter string `json:"formatter,omitempty"`
 
+	ValueFormatter string `json:"valueFormatter,omitempty"`
+
 	// Configuration item for axisPointer
 	AxisPointer *AxisPointer `json:"axisPointer,omitempty"`
 }
@@ -361,6 +376,10 @@ type AxisPointer struct {
 	Link []AxisPointerLink `json:"link,omitempty"`
 
 	Axis string `json:"axis,omitempty"`
+
+	Show bool `json:"show"`
+
+	Label *Label `json:"label,omitempty"`
 }
 
 type AxisPointerLink struct {
@@ -604,6 +623,8 @@ type AxisLabel struct {
 	VerticalAlign string `json:"verticalAlign,omitempty"`
 	// Line height of the axis label
 	LineHeight string `json:"lineHeight,omitempty"`
+
+	BackgroundColor string `json:"backgroundColor,omitempty"`
 }
 
 type AxisTick struct {
@@ -719,6 +740,9 @@ type XAxis struct {
 
 	// Settings related to axis tick.
 	AxisTick *AxisTick `json:"axisTick,omitempty"`
+
+	// Settings related to axis pointer.
+	AxisPointer *AxisPointer `json:"axisPointer,omitempty"`
 }
 
 // YAxis is the option set for Y axis.
@@ -782,6 +806,9 @@ type YAxis struct {
 
 	// Settings related to axis line.
 	AxisLine *AxisLine `json:"axisLine,omitempty"`
+
+	// Settings related to axis pointer.
+	AxisPointer *AxisPointer `json:"axisPointer,omitempty"`
 }
 
 // TextStyle is the option set for a text style component.
@@ -830,6 +857,24 @@ type SplitLine struct {
 	AlignWithLabel bool `json:"alignWithLabel,omitempty"`
 }
 
+// Used to customize how to slice continuous data, and some specific view style for some pieces.
+type Piece struct {
+	Min float32 `json:"min,omitempty"`
+
+	Max float32 `json:"max,omitempty"`
+
+	Lt float32 `json:"lt,omitempty"`
+
+	Lte float32 `json:"lte,omitempty"`
+
+	Gt float32 `json:"gt,omitempty"`
+
+	Gte float32 `json:"gte,omitempty"`
+
+	// Symbol color
+	Color string `json:"color,omitempty"`
+}
+
 // VisualMap is a type of component for visual encoding, which maps the data to visual channels.
 // https://echarts.apache.org/en/option.html#visualMap
 type VisualMap struct {
@@ -854,8 +899,14 @@ type VisualMap struct {
 	// The label text on both ends, such as ['High', 'Low'].
 	Text []string `json:"text,omitempty"`
 
+	// Specify which dimension should be used to fetch dataValue from series.data, and then map them to visual channel.
+	Dimension string `json:"dimension,omitempty"`
+
 	// Define visual channels that will mapped from dataValues that are in selected range.
 	InRange *VisualMapInRange `json:"inRange,omitempty"`
+
+	// Used to customize how to slice continuous data, and some specific view style for some pieces.
+	Pieces []Piece `json:"pieces,omitempty"`
 
 	// Whether to show visualMap-piecewise component. If set as false,
 	// visualMap-piecewise component will not show,
@@ -939,6 +990,20 @@ type DataZoom struct {
 	// If it is set as a single number, one axis is controlled, while if it is set as an Array ,
 	// multiple axes are controlled.
 	YAxisIndex interface{} `json:"yAxisIndex,omitempty"`
+
+	// LabelFormatter is the formatter tool for the label.
+	//
+	// If it is a string, it will be a template. For instance, aaaa{value}bbbb, where {value} will be replaced by the value of actual data value.
+	// It can also be a callback function. For example:
+	//
+	// /** @param {*} value If axis.type is 'category', `value` is the index of axis.data.
+	//  *                   else `value` is current value.
+	//  * @param {string} valueStr Inner formatted string.
+	//  * @return {string} Returns the label formatted.
+	//  labelFormatter: function (value, valueStr) {
+	//     return 'aaa' + value + 'bbb';
+	// }
+	LabelFormatter string `json:"labelFormatter,omitempty"`
 }
 
 // SingleAxis is the option set for single axis.
@@ -1148,7 +1213,8 @@ type RadiusAxis struct {
 	Inverse       bool      `json:"inverse,omitempty"`
 }
 
-var funcPat = regexp.MustCompile(`\n|\t`)
+var newlineTabPat = regexp.MustCompile(`\n|\t`)
+var commentPat = regexp.MustCompile(`(//.*)\n`)
 
 const funcMarker = "__f__"
 
@@ -1159,18 +1225,26 @@ type JSFunctions struct {
 // AddJSFuncs adds a new JS function.
 func (f *JSFunctions) AddJSFuncs(fn ...string) {
 	for i := 0; i < len(fn); i++ {
-		f.Fns = append(f.Fns, funcPat.ReplaceAllString(fn[i], ""))
+		f.Fns = append(f.Fns, newlineTabPat.ReplaceAllString(fn[i], ""))
 	}
 }
 
-// FuncOpts is the option set for handling function type.
+// FuncOpts returns a string suitable for options expecting JavaScript code.
 func FuncOpts(fn string) string {
+	return replaceJsFuncs(fn)
+}
+
+// FuncStripCommentsOpts returns a string suitable for options expecting JavaScript code,
+// stripping '//' comments.
+func FuncStripCommentsOpts(fn string) string {
+	fn = commentPat.ReplaceAllString(fn, "")
 	return replaceJsFuncs(fn)
 }
 
 // replace and clear up js functions string
 func replaceJsFuncs(fn string) string {
-	return fmt.Sprintf("%s%s%s", funcMarker, funcPat.ReplaceAllString(fn, ""), funcMarker)
+	fn = newlineTabPat.ReplaceAllString(fn, "")
+	return fmt.Sprintf("%s%s%s", funcMarker, fn, funcMarker)
 }
 
 type Colors []string

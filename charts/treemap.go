@@ -33,7 +33,7 @@ func (c *TreeMap) AddSeries(name string, data []opts.TreeMapNode, options ...Ser
 
 // SetGlobalOptions sets options for the TreeMap instance.
 func (c *TreeMap) SetGlobalOptions(options ...GlobalOpts) *TreeMap {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

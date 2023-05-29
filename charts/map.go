@@ -42,7 +42,7 @@ func (c *Map) AddSeries(name string, data []opts.MapData, options ...SeriesOpts)
 
 // SetGlobalOptions sets options for the Map instance.
 func (c *Map) SetGlobalOptions(options ...GlobalOpts) *Map {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

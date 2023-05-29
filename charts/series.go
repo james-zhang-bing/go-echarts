@@ -32,11 +32,18 @@ type SingleSeries struct {
 	Draggable          bool        `json:"draggable,omitempty"`
 	FocusNodeAdjacency bool        `json:"focusNodeAdjacency,omitempty"`
 
+	// KLine
+	BarWidth    string `json:"barWidth,omitempty"`
+	BarMinWidth string `json:"barMinWidth,omitempty"`
+	BarMaxWidth string `json:"barMaxWidth,omitempty"`
+
 	// Line
 	Step         interface{} `json:"step,omitempty"`
-	Smooth       bool        `json:"smooth,omitempty"`
-	ConnectNulls bool        `json:"connectNulls,omitempty"`
+	Smooth       bool        `json:"smooth"`
+	ConnectNulls bool        `json:"connectNulls"`
 	ShowSymbol   bool        `json:"showSymbol"`
+	Symbol       string      `json:"symbol,omitempty"`
+	Color        string      `json:"color,omitempty"`
 
 	// Liquid
 	IsLiquidOutline bool `json:"outline,omitempty"`
@@ -52,7 +59,7 @@ type SingleSeries struct {
 	Radius   interface{} `json:"radius,omitempty"`
 
 	// Scatter
-	SymbolSize float32 `json:"symbolSize,omitempty"`
+	SymbolSize interface{} `json:"symbolSize,omitempty"`
 
 	// Tree
 	Orient            string      `json:"orient,omitempty"`
@@ -75,14 +82,23 @@ type SingleSeries struct {
 	RotationRange []float32 `json:"rotationRange,omitempty"`
 
 	// Sunburst
-	NodeClick              string `json:"nodeClick,omitempty"`
-	Sort                   string `json:"sort,omitempty"`
-	RenderLabelForZeroData bool   `json:"renderLabelForZeroData"`
-	SelectedMode           bool   `json:"selectedMode"`
+	NodeClick               string `json:"nodeClick,omitempty"`
+	Sort                    string `json:"sort,omitempty"`
+	RenderLabelForZeroData  bool   `json:"renderLabelForZeroData"`
+	SelectedMode            bool   `json:"selectedMode"`
+	Animation               bool   `json:"animation" default:"true"`
+	AnimationThreshold      int    `json:"animationThreshold,omitempty"`
+	AnimationDuration       int    `json:"animationDuration,omitempty"`
+	AnimationEasing         string `json:"animationEasing,omitempty"`
+	AnimationDelay          int    `json:"animationDelay,omitempty"`
+	AnimationDurationUpdate int    `json:"animationDurationUpdate,omitempty"`
+	AnimationEasingUpdate   string `json:"animationEasingUpdate,omitempty"`
+	AnimationDelayUpdate    int    `json:"animationDelayUpdate,omitempty"`
 	opts.Anime
 
 	// series data
-	Data interface{} `json:"data"`
+	Data         interface{} `json:"data,omitempty"`
+	DatasetIndex int         `json:"datasetIndex,omitempty"`
 
 	// series options
 	*opts.Encode        `json:"encode,omitempty"`
@@ -91,6 +107,7 @@ type SingleSeries struct {
 	*opts.LabelLine     `json:"labelLine,omitempty"`
 	*opts.Emphasis      `json:"emphasis,omitempty"`
 	*opts.MarkLines     `json:"markLine,omitempty"`
+	*opts.MarkAreas     `json:"markArea,omitempty"`
 	*opts.MarkPoints    `json:"markPoint,omitempty"`
 	*opts.RippleEffect  `json:"rippleEffect,omitempty"`
 	*opts.LineStyle     `json:"lineStyle,omitempty"`
@@ -100,6 +117,12 @@ type SingleSeries struct {
 }
 
 type SeriesOpts func(s *SingleSeries)
+
+func WithSeriesAnimation(enable bool) SeriesOpts {
+	return func(s *SingleSeries) {
+		s.Animation = enable
+	}
+}
 
 // WithLabelOpts sets the label.
 func WithLabelOpts(opt opts.Label) SeriesOpts {
@@ -213,10 +236,23 @@ func WithLineChartOpts(opt opts.LineChart) SeriesOpts {
 		s.YAxisIndex = opt.YAxisIndex
 		s.Stack = opt.Stack
 		s.Smooth = opt.Smooth
+		s.ShowSymbol = opt.ShowSymbol
+		s.Symbol = opt.Symbol
+		s.SymbolSize = opt.SymbolSize
 		s.Step = opt.Step
 		s.XAxisIndex = opt.XAxisIndex
 		s.YAxisIndex = opt.YAxisIndex
 		s.ConnectNulls = opt.ConnectNulls
+		s.Color = opt.Color
+	}
+}
+
+// WithLineChartOpts sets the LineChart option.
+func WithKlineChartOpts(opt opts.KlineChart) SeriesOpts {
+	return func(s *SingleSeries) {
+		s.BarWidth = opt.BarWidth
+		s.BarMinWidth = opt.BarMinWidth
+		s.BarMaxWidth = opt.BarMaxWidth
 	}
 }
 
@@ -328,7 +364,10 @@ func WithMarkLineNameCoordItemOpts(opt ...opts.MarkLineNameCoordItem) SeriesOpts
 			s.MarkLines = &opts.MarkLines{}
 		}
 		for _, o := range opt {
-			s.MarkLines.Data = append(s.MarkLines.Data, []MLNameCoord{{Name: o.Name, Coord: o.Coordinate0}, {Coord: o.Coordinate1}})
+			s.MarkLines.Data = append(
+				s.MarkLines.Data,
+				[]MLNameCoord{{Name: o.Name, Coord: o.Coordinate0}, {Coord: o.Coordinate1}},
+			)
 		}
 	}
 }
@@ -353,6 +392,76 @@ func WithMarkLineNameYAxisItemOpts(opt ...opts.MarkLineNameYAxisItem) SeriesOpts
 		}
 		for _, o := range opt {
 			s.MarkLines.Data = append(s.MarkLines.Data, o)
+		}
+	}
+}
+
+// WithMarkAreaNameTypeItemOpts sets the type of the MarkArea.
+func WithMarkAreaNameTypeItemOpts(opt ...opts.MarkAreaNameTypeItem) SeriesOpts {
+	return func(s *SingleSeries) {
+		if s.MarkAreas == nil {
+			s.MarkAreas = &opts.MarkAreas{}
+		}
+		for _, o := range opt {
+			s.MarkAreas.Data = append(s.MarkAreas.Data, o)
+		}
+	}
+}
+
+// WithMarkAreaStyleOpts sets the style of the MarkArea.
+func WithMarkAreaStyleOpts(opt opts.MarkAreaStyle) SeriesOpts {
+	return func(s *SingleSeries) {
+		if s.MarkAreas == nil {
+			s.MarkAreas = &opts.MarkAreas{}
+		}
+
+		s.MarkAreas.MarkAreaStyle = opt
+	}
+}
+
+// WithMarkAreaNameCoordItemOpts sets the coordinates of the MarkLine.
+func WithMarkAreaNameCoordItemOpts(opt ...opts.MarkAreaNameCoordItem) SeriesOpts {
+	type MANameCoord struct {
+		Name      string          `json:"name,omitempty"`
+		ItemStyle *opts.ItemStyle `json:"itemStyle"`
+		Coord     []interface{}   `json:"coord"`
+	}
+	return func(s *SingleSeries) {
+		if s.MarkAreas == nil {
+			s.MarkAreas = &opts.MarkAreas{}
+		}
+		for _, o := range opt {
+			s.MarkAreas.Data = append(
+				s.MarkAreas.Data,
+				[]MANameCoord{
+					{Name: o.Name, ItemStyle: o.ItemStyle, Coord: o.Coordinate0},
+					{Coord: o.Coordinate1},
+				},
+			)
+		}
+	}
+}
+
+// WithMarkAreaNameXAxisItemOpts sets the X axis of the MarkLine.
+func WithMarkAreaNameXAxisItemOpts(opt ...opts.MarkAreaNameXAxisItem) SeriesOpts {
+	return func(s *SingleSeries) {
+		if s.MarkAreas == nil {
+			s.MarkAreas = &opts.MarkAreas{}
+		}
+		for _, o := range opt {
+			s.MarkAreas.Data = append(s.MarkAreas.Data, o)
+		}
+	}
+}
+
+// WithMarkAreaNameYAxisItemOpts sets the Y axis of the MarkLine.
+func WithMarkAreaNameYAxisItemOpts(opt ...opts.MarkAreaNameYAxisItem) SeriesOpts {
+	return func(s *SingleSeries) {
+		if s.MarkAreas == nil {
+			s.MarkAreas = &opts.MarkAreas{}
+		}
+		for _, o := range opt {
+			s.MarkAreas.Data = append(s.MarkAreas.Data, o)
 		}
 	}
 }
@@ -392,6 +501,12 @@ func WithMarkPointNameCoordItemOpts(opt ...opts.MarkPointNameCoordItem) SeriesOp
 	}
 }
 
+func (s *SingleSeries) InitSeriesDefaultOpts(c BaseConfiguration) {
+	opts.SetDefaultValue(s)
+	// some special inherited options from BaseConfiguration
+	s.Animation = c.Animation
+}
+
 func (s *SingleSeries) ConfigureSeriesOpts(options ...SeriesOpts) {
 	for _, opt := range options {
 		opt(s)
@@ -419,11 +534,5 @@ func (ms *MultiSeries) SetSeriesOptions(opts ...SeriesOpts) {
 func WithEncodeOpts(opt opts.Encode) SeriesOpts {
 	return func(s *SingleSeries) {
 		s.Encode = &opt
-	}
-}
-
-func WithSeriesAnimationOpts(opt opts.Anime)SeriesOpts{
-	return func(s *SingleSeries) {
-		s.Anime=opt
 	}
 }

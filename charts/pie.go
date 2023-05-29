@@ -33,7 +33,7 @@ func (c *Pie) AddSeries(name string, data []opts.PieData, options ...SeriesOpts)
 
 // SetGlobalOptions sets options for the Pie instance.
 func (c *Pie) SetGlobalOptions(options ...GlobalOpts) *Pie {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

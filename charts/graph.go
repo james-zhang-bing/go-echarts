@@ -33,7 +33,7 @@ func (c *Graph) AddSeries(name string, nodes []opts.GraphNode, links []opts.Grap
 
 // SetGlobalOptions sets options for the Graph instance.
 func (c *Graph) SetGlobalOptions(options ...GlobalOpts) *Graph {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

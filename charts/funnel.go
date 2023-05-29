@@ -33,7 +33,7 @@ func (c *Funnel) AddSeries(name string, data []opts.FunnelData, options ...Serie
 
 // SetGlobalOptions sets options for the Funnel instance.
 func (c *Funnel) SetGlobalOptions(options ...GlobalOpts) *Funnel {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 

@@ -60,7 +60,7 @@ type RectConfiguration struct {
 }
 
 func (rect *RectConfiguration) setRectGlobalOptions(options ...GlobalOpts) {
-	rect.BaseConfiguration.setBaseGlobalOptions(options...)
+	rect.BaseConfiguration.SetBaseGlobalOptions(options...)
 }
 
 func (rect *RectConfiguration) setRectGlobalActions(options ...GlobalActions) {
@@ -84,7 +84,7 @@ func (rc *RectChart) SetGlobalOptions(options ...GlobalOpts) *RectChart {
 	return rc
 }
 
-//SetDispatchActions sets actions for the RectChart instance.
+// SetDispatchActions sets actions for the RectChart instance.
 func (rc *RectChart) SetDispatchActions(options ...GlobalActions) *RectChart {
 	rc.RectConfiguration.setRectGlobalActions(options...)
 	return rc

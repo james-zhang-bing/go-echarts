@@ -56,7 +56,7 @@ func (c *Geo) extendValue(region string, v float32) []float32 {
 
 // SetGlobalOptions sets options for the Geo instance.
 func (c *Geo) SetGlobalOptions(options ...GlobalOpts) *Geo {
-	c.BaseConfiguration.setBaseGlobalOptions(options...)
+	c.BaseConfiguration.SetBaseGlobalOptions(options...)
 	return c
 }
 
