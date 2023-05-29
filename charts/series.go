@@ -94,6 +94,7 @@ type SingleSeries struct {
 	AnimationDurationUpdate int    `json:"animationDurationUpdate,omitempty"`
 	AnimationEasingUpdate   string `json:"animationEasingUpdate,omitempty"`
 	AnimationDelayUpdate    int    `json:"animationDelayUpdate,omitempty"`
+	opts.Anime
 
 	// series data
 	Data         interface{} `json:"data,omitempty"`
@@ -308,7 +309,7 @@ func WithTreeOpts(opt opts.TreeChart) SeriesOpts {
 // WithTreeMapOpts sets the TreeMapChart options.
 func WithTreeMapOpts(opt opts.TreeMapChart) SeriesOpts {
 	return func(s *SingleSeries) {
-		s.Animation = opt.Animation
+		s.Anime.Animation = opt.Animation
 		s.LeafDepth = opt.LeafDepth
 		s.Roam = opt.Roam
 		s.Levels = opt.Levels
@@ -533,12 +534,5 @@ func (ms *MultiSeries) SetSeriesOptions(opts ...SeriesOpts) {
 func WithEncodeOpts(opt opts.Encode) SeriesOpts {
 	return func(s *SingleSeries) {
 		s.Encode = &opt
-	}
-}
-
-// WithDatasetIndex sets the datasetIndex option.
-func WithDatasetIndex(index int) SeriesOpts {
-	return func(s *SingleSeries) {
-		s.DatasetIndex = index
 	}
 }

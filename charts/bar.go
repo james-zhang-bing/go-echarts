@@ -1,7 +1,6 @@
 package charts
 
 import (
-	"github.com/go-echarts/go-echarts/v2/opts"
 	"github.com/go-echarts/go-echarts/v2/render"
 	"github.com/go-echarts/go-echarts/v2/types"
 )
@@ -39,7 +38,7 @@ func (c *Bar) SetXAxis(x interface{}) *Bar {
 }
 
 // AddSeries adds the new series.
-func (c *Bar) AddSeries(name string, data []opts.BarData, options ...SeriesOpts) *Bar {
+func (c *Bar) AddSeries(name string, data interface{}, options ...SeriesOpts) *Bar {
 	series := SingleSeries{Name: name, Type: types.ChartBar, Data: data}
 	series.ConfigureSeriesOpts(options...)
 	c.MultiSeries = append(c.MultiSeries, series)

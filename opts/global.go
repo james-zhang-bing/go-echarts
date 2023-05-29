@@ -967,6 +967,8 @@ type DataZoom struct {
 	// default 100
 	End float32 `json:"end,omitempty"`
 
+	StartValue interface{} `json:"startValue,omitempty"`
+	EndValue interface{} `json:"endValue,omitempty"`
 	// Specify the frame rate of views refreshing, with unit millisecond (ms).
 	// If animation set as true and animationDurationUpdate set as bigger than 0,
 	// you can keep throttle as the default value 100 (or set it as a value bigger than 0),
@@ -1496,4 +1498,17 @@ type Grid struct {
 type Dataset struct {
 	//source
 	Source interface{} `json:"source"`
+}
+
+// Whether to use animation
+// https://echarts.apache.org/zh/option.html#animation
+type Anime struct {
+	Animation               bool   `json:"animation"`
+	AnimationThreshold      int    `json:"animationThreshold,omitempty"`
+	AnimationDuration       int    `json:"animationDuration,omitempty"`
+	AnimationEasing         string `json:"animationEasing,omitempty"`
+	AnimationDelay          int    `json:"animationDelay,omitempty"`
+	AnimationDurationUpdate int    `json:"animationDurationUpdate,omitempty"`
+	AnimationEasingUpdate   string `json:"animationEasingUpdate,omitempty"`
+	AnimationDelayUpdate    int    `json:"animationDelayUpdate,omitempty"`
 }

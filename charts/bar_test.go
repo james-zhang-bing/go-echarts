@@ -12,6 +12,7 @@ const host = "https://go-echarts.github.io/go-echarts-assets/assets/"
 func TestBarAssetsBeforeRender(t *testing.T) {
 	bar := NewBar()
 	assert.Equal(t, bar.JSAssets.Values, []string{"echarts.min.js"})
+	bar.GetChartID()
 }
 
 func TestBarAssetsAfterRender(t *testing.T) {
