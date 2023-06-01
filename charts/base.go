@@ -293,7 +293,7 @@ func (u *UpdaterConfig) cancelSub(id uint64) {
 	defer u.rwLk.Unlock()
 	delete(u.subs, id)
 }
-func (u *UpdaterConfig) pubDate() {
+func (u *UpdaterConfig) pubData() {
 
 	for data := range u.UpdateCh {
 		u.rwLk.RLock()
@@ -318,7 +318,7 @@ func (u *BaseConfiguration) SetOptionUpdater() chan<- Updater {
 		u.subs = make(map[uint64]chan Updater)
 	}
 	u.once.Do(func() {
-		go u.pubDate()
+		go u.pubData()
 	})
 
 	u.Handle = func(w http.ResponseWriter, r *http.Request) {
@@ -380,11 +380,11 @@ func (bc *BaseConfiguration) RegisterMux(mux ...*http.ServeMux) {
 	http.HandleFunc(fmt.Sprintf("/ws/%s", bc.GetChartID()), bc.Handle)
 
 }
-func (bc *BaseConfiguration) GetUpdaterHandlerFunc() http.HandlerFunc {
+func (bc *BaseConfiguration) GetUpdaterHandlerFunc() (path string,handle http.HandlerFunc) {
 	if bc.UpdaterConfig == nil {
 		bc.SetOptionUpdater()
 	}
-	return bc.Handle
+	return fmt.Sprintf("/ws/%s",bc.GetChartID()),bc.Handle
 }
 
 func (bc *BaseConfiguration) GetChartID() string {
