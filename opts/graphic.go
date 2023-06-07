@@ -6,10 +6,10 @@ type GraphicElementComAttr struct {
 	X        float64 `json:"x,omitempty"`
 	Y        float64 `json:"y,omitempty"`
 	Rotation float64 `json:"rotation,omitempty"`
-	ScaleX   float64 `json:"scalex,omitempty"`
-	ScaleY   float64 `json:"scaley,omitempty"`
-	OriginX  float64 `json:"originx,omitempty"`
-	OriginY  float64 `json:"originy,omitempty"`
+	ScaleX   float64 `json:"scaleX,omitempty"`
+	ScaleY   float64 `json:"scaleY,omitempty"`
+	OriginX  float64 `json:"originX,omitempty"`
+	OriginY  float64 `json:"originY,omitempty"`
 	/*You can specify that all properties have transition animations turned on with `'all'', or you can specify a single property or an array of properties.
 	The properties can be:
 	Transform related properties:'x', 'y', 'scaleX', 'scaleY', 'rotation', 'originX', 'originY'*/

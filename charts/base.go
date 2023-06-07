@@ -399,7 +399,10 @@ func (bc *BaseConfiguration) CallChartMethod(methods ...string) {
 		bc.AddJSFuncs(fmt.Sprintf("goecharts_%s.%s", bc.GetChartID(), v))
 	}
 }
-
+//return the option name which will be used in js
+func (bc *BaseConfiguration)GetOptionVarNameAtJS()string{
+	return fmt.Sprintf("option_%s", bc.GetChartID())
+}
 func (bc *BaseActions) setBaseGlobalActions(opts ...GlobalActions) {
 	for _, opt := range opts {
 		opt(bc)

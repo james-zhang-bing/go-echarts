@@ -15,11 +15,12 @@ var BaseTpl = `
     {{ if isSet  "BaseActions" . }}
 	let action_{{ .ChartID | safeJS }} = {{ .JSONNotEscapedAction | safeJS }};
     {{ end }}
-    goecharts_{{ .ChartID | safeJS }}.setOption(option_{{ .ChartID | safeJS }});
- 	goecharts_{{ .ChartID | safeJS }}.dispatchAction(action_{{ .ChartID | safeJS }});
-     {{- range .JSFunctions.Fns }}
+    {{- range .JSFunctions.Fns }}
      {{ . | safeJS }}
      {{- end }}
+    goecharts_{{ .ChartID | safeJS }}.setOption(option_{{ .ChartID | safeJS }});
+ 	goecharts_{{ .ChartID | safeJS }}.dispatchAction(action_{{ .ChartID | safeJS }});
+     
     {{if .UpdaterConfig}}
     function UpdateOption() {
         var ip_addr = document.location.host;
