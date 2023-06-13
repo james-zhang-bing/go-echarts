@@ -28,13 +28,18 @@ var (
 )
 
 type pageRender struct {
-	c      interface{}
-	before []func()
+	c           interface{}
+	before      []func()
+	tmplContent []string
 }
 
 // NewPageRender returns a render implementation for Page.
 func NewPageRender(c interface{}, before ...func()) Renderer {
-	return &pageRender{c: c, before: before}
+	return &pageRender{c: c, before: before, tmplContent: []string{tpls.HeaderTpl, tpls.BaseTpl, tpls.PageTpl}}
+}
+
+func NewPageRenderWithTmpl(c interface{}, tmpl []string, before ...func()) Renderer {
+	return &pageRender{c: c, before: before, tmplContent: tmpl}
 }
 
 // Render renders the page into the given io.Writer.
@@ -43,8 +48,7 @@ func (r *pageRender) Render(w io.Writer) error {
 		fn()
 	}
 
-	contents := []string{tpls.HeaderTpl, tpls.BaseTpl, tpls.PageTpl}
-	tpl := MustTemplate(ModPage, contents)
+	tpl := MustTemplate(ModPage, r.tmplContent)
 
 	var buf bytes.Buffer
 	if err := tpl.ExecuteTemplate(&buf, ModPage, r.c); err != nil {
@@ -58,13 +62,18 @@ func (r *pageRender) Render(w io.Writer) error {
 }
 
 type chartRender struct {
-	c      interface{}
-	before []func()
+	c           interface{}
+	before      []func()
+	tmplContent []string
 }
 
 // NewChartRender returns a render implementation for Chart.
 func NewChartRender(c interface{}, before ...func()) Renderer {
-	return &chartRender{c: c, before: before}
+	return &chartRender{c: c, before: before, tmplContent: []string{tpls.HeaderTpl, tpls.BaseTpl, tpls.ChartTpl}}
+}
+
+func NewChartRenderWithTmpl(c interface{}, tmpl []string, before ...func()) Renderer {
+	return &chartRender{c: c, before: before, tmplContent: tmpl}
 }
 
 // Render renders the chart into the given io.Writer.
@@ -73,8 +82,7 @@ func (r *chartRender) Render(w io.Writer) error {
 		fn()
 	}
 
-	contents := []string{tpls.HeaderTpl, tpls.BaseTpl, tpls.ChartTpl}
-	tpl := MustTemplate(ModChart, contents)
+	tpl := MustTemplate(ModChart, r.tmplContent)
 
 	var buf bytes.Buffer
 	if err := tpl.ExecuteTemplate(&buf, ModChart, r.c); err != nil {

@@ -13,12 +13,12 @@ type GraphicElementComAttr struct {
 	/*You can specify that all properties have transition animations turned on with `'all'', or you can specify a single property or an array of properties.
 	The properties can be:
 	Transform related properties:'x', 'y', 'scaleX', 'scaleY', 'rotation', 'originX', 'originY'*/
-	Transition        any `json:"transition,omitempty"`
-	EnterFrom         any `json:"enterFrom,omitempty"`
-	LeaveTo           any `json:"leaveTo,omitempty"`
-	EnterAnimation    any `json:"enterAnimation,omitempty"`
-	UpdateAnimation   any `json:"updateAnimation,omitempty"`
-	LeaveAnimation    any `json:"leaveAnimation,omitempty"`
+	Transition        any                `json:"transition,omitempty"`
+	EnterFrom         any                `json:"enterFrom,omitempty"`
+	LeaveTo           any                `json:"leaveTo,omitempty"`
+	EnterAnimation    any                `json:"enterAnimation,omitempty"`
+	UpdateAnimation   any                `json:"updateAnimation,omitempty"`
+	LeaveAnimation    any                `json:"leaveAnimation,omitempty"`
 	KeyFrameAnimation *KeyframeAnimation `json:"keyframeAnimation,omitempty"`
 	/*
 			Specify how to be positioned in its parent.
@@ -45,6 +45,13 @@ type GraphicElementComAttr struct {
 	TextConfig  *GraphicTextConfig `json:"textConfig,omitempty"`
 	Draggable   bool               `json:"draggable,omitempty"`
 	Width       int                `json:"width,omitempty"`
+	//none self series
+	Focus string `json:"focus,omitempty"`
+	// 'coordinateSystem'  'series' 'global'
+	BlurScope   string      `json:"blurScope,omitempty"`
+	OnMouseOver interface{} `json:"onmouseover,omitempty"`
+	OnMouseOut  interface{} `json:"onmouseout,omitempty"`
+	OnMouseWheel  interface{} `json:"onmousewheel,omitempty"`
 }
 type TextContent struct {
 	*GraphicTextStyle `json:"style,omitempty"`
@@ -80,10 +87,11 @@ func (attr *GraphicElementComAttr) SetTextConfig(c *GraphicTextConfig) *GraphicE
 	attr.TextConfig = c
 	return attr
 }
-func (attr *GraphicElementComAttr)SetAnimation(anime *KeyframeAnimation)*GraphicElementComAttr{
-	attr.KeyFrameAnimation=anime
+func (attr *GraphicElementComAttr) SetAnimation(anime *KeyframeAnimation) *GraphicElementComAttr {
+	attr.KeyFrameAnimation = anime
 	return attr
 }
+
 type GraphicRectShape struct {
 	X          float64   `json:"x,omitempty"`
 	Y          float64   `json:"y,omitempty"`
@@ -169,8 +177,6 @@ type Keyframe struct {
 	// Easing function from the last keyframe to this keyframe. Optional
 	Easing string `json:"easing,omitempty"`
 	// Other properties are for configuring the state of target at this keyframe, such as x, y, style, shape, etc.
-	Style *GraphicStyle     `json:"style,omitempty"`
-	Shape any `json:"shape,omitempty"`
-	
+	Style *GraphicStyle `json:"style,omitempty"`
+	Shape any           `json:"shape,omitempty"`
 }
-

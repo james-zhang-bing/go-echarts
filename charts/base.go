@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"regexp"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -311,6 +312,10 @@ type Updater interface {
 	JSONNotEscaped() template.HTML
 }
 
+var (
+	pat = regexp.MustCompile(`(__f__")|("__f__)|(__f__)`)
+)
+
 func (u *BaseConfiguration) SetOptionUpdater() chan<- Updater {
 	if u.UpdaterConfig == nil {
 		u.UpdaterConfig = &UpdaterConfig{}
@@ -349,7 +354,9 @@ func (u *BaseConfiguration) SetOptionUpdater() chan<- Updater {
 		for {
 			select {
 			case chart := <-ch:
-				if err := conn.WriteMessage(websocket.TextMessage, []byte(chart.JSONNotEscaped())); err != nil {
+				//content:=bytes.ReplaceAll([]byte(chart.JSONNotEscaped()),[]byte("__f__"), []byte("@@f@@"))
+				content := pat.ReplaceAll([]byte(chart.JSONNotEscaped()), []byte(""))
+				if err := conn.WriteMessage(websocket.TextMessage, content); err != nil {
 					return
 				}
 			case <-ctx.Done():
@@ -380,11 +387,11 @@ func (bc *BaseConfiguration) RegisterMux(mux ...*http.ServeMux) {
 	http.HandleFunc(fmt.Sprintf("/ws/%s", bc.GetChartID()), bc.Handle)
 
 }
-func (bc *BaseConfiguration) GetUpdaterHandlerFunc() (path string,handle http.HandlerFunc) {
+func (bc *BaseConfiguration) GetUpdaterHandlerFunc() (path string, handle http.HandlerFunc) {
 	if bc.UpdaterConfig == nil {
 		bc.SetOptionUpdater()
 	}
-	return fmt.Sprintf("/ws/%s",bc.GetChartID()),bc.Handle
+	return fmt.Sprintf("/ws/%s", bc.GetChartID()), bc.Handle
 }
 
 func (bc *BaseConfiguration) GetChartID() string {
@@ -399,8 +406,9 @@ func (bc *BaseConfiguration) CallChartMethod(methods ...string) {
 		bc.AddJSFuncs(fmt.Sprintf("goecharts_%s.%s", bc.GetChartID(), v))
 	}
 }
-//return the option name which will be used in js
-func (bc *BaseConfiguration)GetOptionVarNameAtJS()string{
+
+// return the option name which will be used in js
+func (bc *BaseConfiguration) GetOptionVarNameAtJS() string {
 	return fmt.Sprintf("option_%s", bc.GetChartID())
 }
 func (bc *BaseActions) setBaseGlobalActions(opts ...GlobalActions) {

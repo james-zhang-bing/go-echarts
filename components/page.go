@@ -43,6 +43,9 @@ func NewPage() *Page {
 	page.Layout = PageCenterLayout
 	return page
 }
+func (p *Page)SetCustomRenderTmpl(tmpl ...string){
+	p.Renderer=render.NewPageRenderWithTmpl(p,tmpl,p.Validate)
+}
 
 // SetLayout sets the layout of the Page.
 func (page *Page) SetLayout(layout Layout) *Page {
