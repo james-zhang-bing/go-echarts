@@ -44,7 +44,9 @@ type GraphicElementComAttr struct {
 	TextContent *TextContent       `json:"textContent,omitempty"`
 	TextConfig  *GraphicTextConfig `json:"textConfig,omitempty"`
 	Draggable   bool               `json:"draggable,omitempty"`
-	Width       int                `json:"width,omitempty"`
+	Width       int                `json:"width,omitempty"` 
+	Progressive       bool                `json:"progressive,omitempty"` 
+	Silent bool `json:"silent,omitempty"`
 	//none self series
 	Focus string `json:"focus,omitempty"`
 	// 'coordinateSystem'  'series' 'global'
